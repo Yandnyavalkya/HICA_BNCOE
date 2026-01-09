@@ -2,6 +2,16 @@
 
 This guide will walk you through deploying the HICA project (Node.js backend + React frontend) to Render.
 
+## 🎯 Key Feature: Frontend Works Without Backend!
+
+**Your frontend is designed to work independently!** When deployed to Render:
+- ✅ All pages work perfectly without a backend
+- ✅ Uses fallback data automatically when backend is unavailable
+- ✅ Same experience as running locally without backend
+- ✅ You can deploy frontend first, then add backend later
+
+This means you can deploy the frontend immediately and add your backend connection later!
+
 ## Prerequisites
 
 1. **GitHub Account** - Your code should be in a GitHub repository
@@ -115,7 +125,16 @@ ADMIN_PASSWORD = adminYKD@123
 - **Build Command**: `npm install && npm run build`
 - **Start Command**: `npx serve -s dist -l 10000`
 
-**Environment Variables:**
+**Environment Variables (Optional):**
+
+**Important:** The frontend is designed to work **without a backend**! It uses fallback data automatically when the backend is unavailable.
+
+**Option 1: Deploy without backend (Recommended for initial deployment)**
+- **Don't add any environment variables**
+- The site will automatically use fallback data
+- All pages will work exactly as they do locally without the backend
+
+**Option 2: Connect to your backend (If you have one deployed)**
 Add this environment variable:
 
 ```
@@ -123,6 +142,8 @@ VITE_API_BASE_URL = https://your-backend-url.onrender.com
 ```
 
 Replace `https://your-backend-url.onrender.com` with your actual backend URL from Step 2.3.
+
+The site will try to fetch data from your backend, and fall back to static data if the backend is unavailable.
 
 ### 3.3 Deploy Frontend
 
@@ -144,12 +165,20 @@ Replace `https://your-backend-url.onrender.com` with your actual backend URL fro
    ```
 4. Click **"Save Changes"** - This will trigger a redeploy
 
-### 4.2 Verify Frontend API URL
+### 4.2 Verify Frontend API URL (If Using Backend)
+
+**Note:** This step is only needed if you're connecting to a backend. The frontend works perfectly without it!
 
 1. Go to your frontend service in Render
 2. Navigate to **"Environment"** tab
-3. Verify `VITE_API_BASE_URL` is set to your backend URL
+3. If you want to connect to a backend, add or verify `VITE_API_BASE_URL` is set to your backend URL
 4. If you need to change it, update and save (this will trigger a rebuild)
+
+**How it works:**
+- If `VITE_API_BASE_URL` is set, the frontend will try to fetch data from your backend
+- If the backend is available, it uses live data
+- If the backend is unavailable, it automatically falls back to static data
+- If `VITE_API_BASE_URL` is not set, the frontend uses fallback data immediately
 
 ---
 
@@ -239,9 +268,9 @@ After adding custom domain, update:
 ### Frontend Build Failing
 
 1. Check **"Logs"** tab
-2. Verify `VITE_API_BASE_URL` is set
-3. Check for TypeScript errors
-4. Ensure all dependencies are in `package.json`
+2. Check for TypeScript errors
+3. Ensure all dependencies are in `package.json`
+4. **Note:** `VITE_API_BASE_URL` is optional - the frontend works without it using fallback data
 
 ### CORS Errors
 

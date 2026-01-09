@@ -1,10 +1,25 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+// In production, if no API URL is set, use an invalid URL to fail fast
+// This ensures fallback data is used immediately
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (envUrl) return envUrl;
+  
+  // In production (not localhost), use invalid URL to fail fast
+  if (import.meta.env.PROD) {
+    return 'https://invalid-backend-url-for-fallback.netlify.app';
+  }
+  
+  // In development, use localhost
+  return 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 5000, // 5 second timeout
+  timeout: 2000, // 2 second timeout for faster fallback in production
 })
 
 // Add response interceptor to handle errors gracefully
