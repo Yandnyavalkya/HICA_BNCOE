@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { fallbackEvents, fallbackConfig } from '../data/fallbackData';
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState('');
@@ -9,18 +10,34 @@ export default function Home() {
   const { data: events } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
-      const res = await api.get('/events');
-      return res.data;
+      try {
+        const res = await api.get('/events');
+        return res.data;
+      } catch (error) {
+        console.warn('Using fallback events data');
+        return fallbackEvents;
+      }
     },
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: fallbackEvents,
   });
 
   // Get site config for hero content
   const { data: config } = useQuery({
     queryKey: ['config'],
     queryFn: async () => {
-      const res = await api.get('/config');
-      return res.data && res.data.length > 0 ? res.data[0] : null;
+      try {
+        const res = await api.get('/config');
+        return res.data && res.data.length > 0 ? res.data[0] : fallbackConfig;
+      } catch (error) {
+        console.warn('Using fallback config data');
+        return fallbackConfig;
+      }
     },
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: fallbackConfig,
   });
 
   useEffect(() => {

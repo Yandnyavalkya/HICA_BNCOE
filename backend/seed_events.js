@@ -17,16 +17,16 @@ async function seedEvents() {
     const events = [
       {
         title: 'TECH MUN 2025',
-        description: 'Join us for an exciting Model United Nations conference focused on technology and innovation. This event brings together students to discuss and debate critical tech issues.',
+        description: 'Join us for an exciting Model United Nations conference focused on technology and innovation. This prestigious event brings together students from various institutions to discuss, debate, and collaborate on critical tech issues shaping our future. Participants will engage in thought-provoking discussions about artificial intelligence, cybersecurity, digital transformation, and sustainable technology solutions. The conference features keynote speeches from industry leaders, interactive workshops, networking sessions, and competitive debates. Whether you are a tech enthusiast, aspiring engineer, or future leader, TECH MUN 2025 offers a unique platform to enhance your knowledge, develop critical thinking skills, and connect with like-minded individuals. Don\'t miss this opportunity to be part of a transformative experience that combines diplomacy, technology, and innovation.',
         date: new Date('2025-01-15T10:00:00'),
         location: 'BNCOE Campus',
         image_url: 'https://res.cloudinary.com/dty4b2yj1/image/upload/v1767880198/tech-mun-2025.jpg',
-        registration_link: 'https://forms.gle/example1',
+        registration_link: null,
         event_category: 'tech-mun-2025',
       },
       {
         title: 'HICA Inauguration Ceremony',
-        description: 'The official inauguration ceremony of HICA BNCOE. Join us as we celebrate the launch of our community and welcome new members.',
+        description: 'The official inauguration ceremony of HICA BNCOE marks a significant milestone in our journey. Join us as we celebrate the launch of our vibrant community and welcome new members into the HICA family. This grand event features inspiring speeches from faculty advisors, student leaders, and distinguished guests. The ceremony includes the official announcement of our mission, vision, and goals for the academic year. We will introduce our core team members, showcase upcoming events and initiatives, and provide opportunities for networking and collaboration. The inauguration sets the tone for a year filled with innovation, learning, and community building. Whether you are a new member or a returning participant, this ceremony is your gateway to becoming an active part of HICA\'s exciting journey. Come be part of history as we embark on this transformative adventure together.',
         date: new Date('2025-01-10T14:00:00'),
         location: 'BNCOE Campus',
         image_url: 'https://res.cloudinary.com/dty4b2yj1/image/upload/v1767880198/hica-inauguration.jpg',

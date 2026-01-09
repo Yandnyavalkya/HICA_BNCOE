@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { fallbackTeamMembers, fallbackConfig } from '../data/fallbackData';
 
 type TeamMember = {
   _id: string;
@@ -19,17 +20,33 @@ export default function Team() {
   const { data, isLoading } = useQuery<TeamMember[]>({
     queryKey: ['team'],
     queryFn: async () => {
-      const res = await api.get<TeamMember[]>('/team');
-      return res.data;
+      try {
+        const res = await api.get<TeamMember[]>('/team');
+        return res.data;
+      } catch (error) {
+        console.warn('Using fallback team data');
+        return fallbackTeamMembers as TeamMember[];
+      }
     },
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: fallbackTeamMembers as TeamMember[],
   });
 
   const { data: config } = useQuery({
     queryKey: ['config'],
     queryFn: async () => {
-      const res = await api.get('/config');
-      return res.data;
+      try {
+        const res = await api.get('/config');
+        return res.data && res.data.length > 0 ? res.data[0] : fallbackConfig;
+      } catch (error) {
+        console.warn('Using fallback config data');
+        return fallbackConfig;
+      }
     },
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: fallbackConfig,
   });
 
   const videoUrl = config?.team_intro_video_url;

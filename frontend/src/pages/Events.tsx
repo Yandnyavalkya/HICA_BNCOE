@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { fallbackEvents } from '../data/fallbackData';
 
 type Event = {
   _id: string;
@@ -20,9 +21,18 @@ export default function Events() {
   const { data, isLoading } = useQuery<Event[]>({
     queryKey: ['events'],
     queryFn: async () => {
-      const res = await api.get<Event[]>('/events');
-      return res.data;
+      try {
+        const res = await api.get<Event[]>('/events');
+        return res.data;
+      } catch (error) {
+        // Return fallback data if backend is unavailable
+        console.warn('Using fallback events data');
+        return fallbackEvents as Event[];
+      }
     },
+    retry: false, // Don't retry if backend is down
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    placeholderData: fallbackEvents as Event[], // Show fallback immediately
   });
 
   const toggleExpand = (eventId: string) => {
@@ -125,37 +135,35 @@ export default function Events() {
                       >
                         {event.description}
                       </p>
-                      {event.description.length > 150 && (
+                      {event.description.length > 120 && (
                         <button
                           onClick={() => toggleExpand(event._id)}
-                          className="mt-2 text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors duration-300"
+                          className="mt-2 text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors duration-300 flex items-center gap-1"
                         >
-                          {expandedCards.has(event._id) ? 'Read Less' : 'Read More'}
+                          {expandedCards.has(event._id) ? (
+                            <>
+                              <span>Read Less</span>
+                              <i className="fas fa-chevron-up text-xs"></i>
+                            </>
+                          ) : (
+                            <>
+                              <span>Read More</span>
+                              <i className="fas fa-chevron-down text-xs"></i>
+                            </>
+                          )}
                         </button>
                       )}
                     </div>
                   )}
 
-                  <div className="flex flex-col gap-3">
-                    {event.event_category && (
-                      <Link
-                        to={`/gallery?event=${encodeURIComponent(event.event_category)}`}
-                        className="inline-block w-full text-center px-6 py-3 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 rounded-lg font-semibold text-white hover:from-cyan-500 hover:via-blue-500 hover:to-purple-500 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/50"
-                      >
-                        📸 View Gallery
-                      </Link>
-                    )}
-                    {event.registration_link && (
-                      <a
-                        href={event.registration_link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-block w-full text-center px-6 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 rounded-lg font-semibold text-white hover:from-purple-500 hover:via-pink-500 hover:to-cyan-500 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/50"
-                      >
-                        Register Now
-                      </a>
-                    )}
-                  </div>
+                  {event.event_category && (
+                    <Link
+                      to={`/gallery?event=${encodeURIComponent(event.event_category)}`}
+                      className="inline-block w-full text-center px-6 py-3 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 rounded-lg font-semibold text-white hover:from-cyan-500 hover:via-blue-500 hover:to-purple-500 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/50"
+                    >
+                      📸 View Gallery
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

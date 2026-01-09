@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { fallbackGalleryImages } from '../data/fallbackData';
 
 type GalleryImage = {
   _id: string;
@@ -20,9 +21,17 @@ export default function Gallery() {
   const { data, isLoading } = useQuery<GalleryImage[]>({
     queryKey: ['gallery', eventFilter],
     queryFn: async () => {
-      const res = await api.get<GalleryImage[]>('/gallery');
-      return res.data;
+      try {
+        const res = await api.get<GalleryImage[]>('/gallery');
+        return res.data;
+      } catch (error) {
+        console.warn('Using fallback gallery data');
+        return fallbackGalleryImages as GalleryImage[];
+      }
     },
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: fallbackGalleryImages as GalleryImage[],
   });
 
   // Filter images by event category if provided

@@ -1,13 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
+import { fallbackConfig } from '../data/fallbackData';
 
 export default function About() {
   const { data: config } = useQuery({
     queryKey: ['config'],
     queryFn: async () => {
-      const res = await api.get('/config');
-      return res.data && res.data.length > 0 ? res.data[0] : null;
+      try {
+        const res = await api.get('/config');
+        return res.data && res.data.length > 0 ? res.data[0] : fallbackConfig;
+      } catch (error) {
+        console.warn('Using fallback config data');
+        return fallbackConfig;
+      }
     },
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    placeholderData: fallbackConfig,
   });
 
   const siteName = config?.site_name || 'HICA';
