@@ -7,9 +7,16 @@ const router = express.Router();
 // Login
 router.post('/login', async (req, res) => {
   try {
+    console.log('[DEBUG] Login request received:', { 
+      body: req.body, 
+      hasUsername: !!req.body.username, 
+      hasPassword: !!req.body.password 
+    });
+    
     const { username, password } = req.body;
 
     if (!username || !password) {
+      console.log('[DEBUG] Missing credentials');
       return res.status(400).json({ detail: 'Email and password are required' });
     }
 
